@@ -103,6 +103,16 @@ if __name__ == "__main__":
 
 Read `COPYRIGHT_and_LICENSE_code.txt` and `COPYRIGHT_and_LICENSE_voices.txt`
 
+    Basque (voice models & linguistic data):
+     	Copyright: Aholab Signal Processing Laboratory, University of the Basque Country (UPV/EHU)
+    	License: The files in this package are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
+    	         http://creativecommons.org/licenses/by-sa/3.0/
+    
+    Spanish: (voice models & linguistic data):
+     	Copyright: Aholab Signal Processing Laboratory, University of the Basque Country (UPV/EHU)
+    	License: The files in this package are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
+    	         http://creativecommons.org/licenses/by-sa/3.0/
+
 ## Credits
 
 > Based on the [fork from @ekaitz-zarraga](https://github.com/ekaitz-zarraga/AhoTTS)
