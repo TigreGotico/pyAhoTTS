@@ -9,7 +9,7 @@ School of Engineering (University of the Basque Country).
 ## Install
 
 ```bash
-git clone https://..../AhoTTS
+git clone https://github.com/TigreGotico/pyAhoTTS
 cd AhoTTS
 mkdir build
 cd build
