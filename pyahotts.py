@@ -8,18 +8,18 @@ class AhoTTS:
     def __init__(self, lib_path: str, data_path: str):
         self.data_path = data_path.encode("utf-8")
         self._load_library(lib_path)
-        self.tts = self.lib.create_tts(self.data_path)
-        if not self.tts:
-            raise RuntimeError("Failed to create TTS instance")
+        self.tts = None
+        self.current_lang = None
 
     def _load_library(self, lib_path: str):
         self.lib = ctypes.cdll.LoadLibrary(lib_path)
 
-        self.lib.create_tts.argtypes = [ctypes.c_char_p]
+        self.lib.create_tts.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
         self.lib.create_tts.restype = ctypes.c_void_p
 
         self.lib.synthesize_text.argtypes = [
             ctypes.c_void_p,
+            ctypes.c_char_p,
             ctypes.c_char_p,
             ctypes.c_char_p,
             ctypes.POINTER(ctypes.POINTER(ctypes.c_short)),
@@ -30,14 +30,27 @@ class AhoTTS:
         self.lib.free_samples.argtypes = [ctypes.POINTER(ctypes.c_short)]
         self.lib.destroy_tts.argtypes = [ctypes.c_void_p]
 
+    def _recreate_tts(self, lang: str):
+        if self.tts is not None:
+            self.lib.destroy_tts(self.tts)
+        self.tts = self.lib.create_tts(self.data_path, lang.encode("utf-8"))
+        if not self.tts:
+            raise RuntimeError(f"Failed to create TTS instance for language: {lang}")
+        self.current_lang = lang
+
     def get_tts(self, text: str, lang: str = "eu", wav_path: str = None) -> bytes:
         text_bytes = text.encode("utf-8")
         lang_bytes = lang.encode("utf-8")
+
+        # Check if the language is different from the current language
+        if self.tts is None or self.current_lang != lang:
+            self._recreate_tts(lang)
+
         samples_ptr = ctypes.POINTER(ctypes.c_short)()
         length = ctypes.c_int()
 
         success = self.lib.synthesize_text(
-            self.tts, text_bytes, self.data_path,
+            self.tts, text_bytes, self.data_path, lang_bytes,
             ctypes.byref(samples_ptr), ctypes.byref(length)
         )
 
@@ -50,9 +63,9 @@ class AhoTTS:
 
         if wav_path:
             with wave.open(wav_path, "wb") as wf:
-                wf.setnchannels(1)  # Mono
-                wf.setsampwidth(2)  # 2 bytes per sample (16-bit)
-                wf.setframerate(16000)  # Assuming 16kHz
+                wf.setnchannels(1)        # Mono
+                wf.setsampwidth(2)        # 2 bytes per sample (16-bit)
+                wf.setframerate(16000)    # Assuming 16kHz
                 wf.writeframes(samples_bytes)
 
         self.lib.free_samples(samples_ptr)
@@ -66,11 +79,17 @@ class AhoTTS:
 
 if __name__ == "__main__":
     tts = AhoTTS(
-        lib_path="/home/miro/PycharmProjects/AhoTTS/build/src/libhtts.so",
+        lib_path="/home/miro/PycharmProjects/AhoTTS/libhtts_x86.so",
         data_path="/home/miro/PycharmProjects/AhoTTS/data_tts"
     )
 
-    audio_bytes = tts.get_tts("Kaixo, Mundua!", lang="eu", wav_path="output.wav")
+    audio_bytes = tts.get_tts("Kaixo Mundua!", lang="eu", wav_path="output_eu.wav")
+
+    if audio_bytes:
+        print(f"Generated {len(audio_bytes)} bytes of audio.")
+
+
+    audio_bytes = tts.get_tts("Hola Mundo", lang="es", wav_path="output_es.wav")
 
     if audio_bytes:
         print(f"Generated {len(audio_bytes)} bytes of audio.")
