@@ -11,15 +11,10 @@ School of Engineering (University of the Basque Country).
 - [ ] bundle .so files for all platforms
 - [ ] publish to pypi
 
-## Compile
+## Install
 
 ```bash
-git clone https://github.com/TigreGotico/pyAhoTTS
-cd AhoTTS
-mkdir build
-cd build
-cmake .. 
-make
+pip install git+https://github.com/TigreGotico/pyAhoTTS
 ```
 
 ## Usage
@@ -43,6 +38,20 @@ audio_bytes = tts.get_tts("Hola Mundo", lang="es", wav_path="output_es.wav")
 if audio_bytes:
     print(f"Generated {len(audio_bytes)} bytes of audio.")
 ```
+
+### Compile
+
+If not running on x86_64 you will need to compile from source
+
+```bash
+git clone https://github.com/TigreGotico/pyAhoTTS
+cd AhoTTS
+mkdir build
+cd build
+cmake .. 
+make
+```
+
 
 ## LICENSE
 
