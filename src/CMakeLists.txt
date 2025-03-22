@@ -165,6 +165,7 @@ set(srcs
     htts_io.cpp
     httsmsg.c
     httsmsg.h
+    htts_wrapper.cpp
     io.cpp
     isofilt.c
     isofilt.h
