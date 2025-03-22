@@ -1,11 +1,15 @@
 import ctypes
 import wave
-
+from os.path import dirname
 import numpy as np
 
 
 class AhoTTS:
-    def __init__(self, lib_path: str, data_path: str):
+    def __init__(self, lib_path: str = None,
+                 data_path: str = f"{dirname(__file__)}/data_tts"):
+        if lib_path is None:
+            # TODO platform detection
+            lib_path = f"{dirname(__file__)}/libhtts_x86.so"
         self.data_path = data_path.encode("utf-8")
         self._load_library(lib_path)
         self.tts = None
@@ -78,18 +82,15 @@ class AhoTTS:
 
 
 if __name__ == "__main__":
-    tts = AhoTTS(
-        lib_path="/home/miro/PycharmProjects/AhoTTS/libhtts_x86.so",
-        data_path="/home/miro/PycharmProjects/AhoTTS/data_tts"
-    )
+    tts = AhoTTS()
 
-    audio_bytes = tts.get_tts("Kaixo Mundua!", lang="eu", wav_path="output_eu.wav")
+    audio_bytes = tts.get_tts("Kaixo Mundua!", lang="eu", wav_path="../output_eu.wav")
 
     if audio_bytes:
         print(f"Generated {len(audio_bytes)} bytes of audio.")
 
 
-    audio_bytes = tts.get_tts("Hola Mundo", lang="es", wav_path="output_es.wav")
+    audio_bytes = tts.get_tts("Hola Mundo", lang="es", wav_path="../output_es.wav")
 
     if audio_bytes:
         print(f"Generated {len(audio_bytes)} bytes of audio.")
