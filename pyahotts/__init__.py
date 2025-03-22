@@ -1,23 +1,94 @@
 import ctypes
+import platform
 import wave
-from os.path import dirname
+from os.path import dirname, isfile
+from typing import Optional
+
 import numpy as np
 
 
 class AhoTTS:
-    def __init__(self, lib_path: str = None,
+    """
+    A class to interact with AhoTTS, a text-to-speech (TTS) system that uses a shared library for synthesis.
+
+    Attributes:
+        data_path (bytes): Path to the directory containing TTS data.
+        tts (ctypes.c_void_p): The TTS instance created by the shared library.
+        current_lang (Optional[str]): The current language used by the TTS instance.
+    """
+
+    def __init__(self, lib_path: Optional[str] = None,
                  data_path: str = f"{dirname(__file__)}/data_tts"):
+        """
+        Initializes the AhoTTS instance, loading the shared library and setting the data path.
+
+        Args:
+            lib_path (Optional[str]): Path to the shared library (.so, .dll, .dylib). If None, the library is
+                                       determined based on the platform.
+            data_path (str): Path to the directory containing TTS data (default is `./data_tts`).
+        """
         if lib_path is None:
-            # TODO platform detection
-            lib_path = f"{dirname(__file__)}/libhtts_x86.so"
+            lib_path = self._get_platform_lib_path()
+            if not isfile(lib_path):
+                raise FileNotFoundError(f"Please compile and pass the shared library via 'lib_path' argument")
+
         self.data_path = data_path.encode("utf-8")
         self._load_library(lib_path)
         self.tts = None
         self.current_lang = None
 
+    @staticmethod
+    def _get_platform_lib_path() -> str:
+        """
+        Determines the appropriate shared library path based on the platform and architecture.
+
+        Returns:
+            str: The path to the shared library for the current platform and architecture.
+
+        Raises:
+            RuntimeError: If the platform is unsupported.
+        """
+        system = platform.system().lower()
+        arch = platform.architecture()[0]
+
+        # Detecting ARM and AArch64 architectures
+        if "arm" in platform.processor().lower():
+            if arch == "64bit":
+                return f"{dirname(__file__)}/libhtts_aarch64.so"
+            else:
+                return f"{dirname(__file__)}/libhtts_arm.so"
+
+        # For Linux (x86_64 and x86)
+        if system == "linux":
+            if arch == "64bit":
+                return f"{dirname(__file__)}/libhtts_x86_64.so"
+            else:
+                return f"{dirname(__file__)}/libhtts_x86.so"
+
+        # For macOS (64-bit)
+        elif system == "darwin":
+            if arch == "64bit":
+                return f"{dirname(__file__)}/libhtts_x86_64.dylib"
+            else:
+                return f"{dirname(__file__)}/libhtts_x86.dylib"
+
+        # Windows
+        elif system == "windows":
+            return f"{dirname(__file__)}/libhtts_x86.dll"
+
+        else:
+            raise RuntimeError(f"Unsupported platform: {system}")
+
     def _load_library(self, lib_path: str):
+        """
+        Loads the shared library and sets up the function prototypes for TTS operations.
+
+        Args:
+            lib_path (str): Path to the shared library.
+        """
         self.lib = ctypes.cdll.LoadLibrary(lib_path)
 
+        # Setup argument types and return types for library functions
         self.lib.create_tts.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
         self.lib.create_tts.restype = ctypes.c_void_p
 
@@ -35,6 +106,15 @@ class AhoTTS:
         self.lib.destroy_tts.argtypes = [ctypes.c_void_p]
 
     def _recreate_tts(self, lang: str):
+        """
+        Recreates the TTS instance for a given language.
+
+        Args:
+            lang (str): The language code (e.g., 'eu' for Basque).
+
+        Raises:
+            RuntimeError: If the TTS instance could not be created.
+        """
         if self.tts is not None:
             self.lib.destroy_tts(self.tts)
         self.tts = self.lib.create_tts(self.data_path, lang.encode("utf-8"))
@@ -42,7 +122,18 @@ class AhoTTS:
             raise RuntimeError(f"Failed to create TTS instance for language: {lang}")
         self.current_lang = lang
 
-    def get_tts(self, text: str, lang: str = "eu", wav_path: str = None) -> bytes:
+    def get_tts(self, text: str, lang: str = "eu", wav_path: Optional[str] = None) -> bytes:
+        """
+        Generates speech from text and returns it as a byte array, optionally saving it to a WAV file.
+
+        Args:
+            text (str): The text to be converted to speech.
+            lang (str): The language code for TTS synthesis (default is 'eu' for Basque).
+            wav_path (Optional[str]): If provided, saves the generated audio as a WAV file at this path.
+
+        Returns:
+            bytes: The generated audio as a byte array, or an empty byte array if synthesis fails.
+        """
         text_bytes = text.encode("utf-8")
         lang_bytes = lang.encode("utf-8")
 
@@ -67,15 +158,18 @@ class AhoTTS:
 
         if wav_path:
             with wave.open(wav_path, "wb") as wf:
-                wf.setnchannels(1)        # Mono
-                wf.setsampwidth(2)        # 2 bytes per sample (16-bit)
-                wf.setframerate(16000)    # Assuming 16kHz
+                wf.setnchannels(1)  # Mono
+                wf.setsampwidth(2)  # 2 bytes per sample (16-bit)
+                wf.setframerate(16000)  # Assuming 16kHz
                 wf.writeframes(samples_bytes)
 
         self.lib.free_samples(samples_ptr)
         return samples_bytes
 
     def __del__(self):
+        """
+        Cleans up by destroying the TTS instance when the object is deleted.
+        """
         if hasattr(self, 'tts') and self.tts:
             self.lib.destroy_tts(self.tts)
             self.tts = None
@@ -88,7 +182,6 @@ if __name__ == "__main__":
 
     if audio_bytes:
         print(f"Generated {len(audio_bytes)} bytes of audio.")
-
 
     audio_bytes = tts.get_tts("Hola Mundo", lang="es", wav_path="../output_es.wav")
 

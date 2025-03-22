@@ -8,11 +8,10 @@ School of Engineering (University of the Basque Country).
 
 ## TODO
 
-- [ ] python package
 - [ ] bundle .so files for all platforms
 - [ ] publish to pypi
 
-## Install
+## Compile
 
 ```bash
 git clone https://github.com/TigreGotico/pyAhoTTS
