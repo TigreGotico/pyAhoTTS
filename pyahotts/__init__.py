@@ -28,7 +28,7 @@ class AhoTTS:
             data_path (str): Path to the directory containing TTS data (default is `./data_tts`).
         """
         if lib_path is None:
-            lib_path = self._get_platform_lib_path()
+            lib_path = f"{dirname(__file__)}/libhtts_{platform.machine()}.so"
             if not isfile(lib_path):
                 raise FileNotFoundError(f"Please compile and pass the shared library via 'lib_path' argument")
 
@@ -36,48 +36,6 @@ class AhoTTS:
         self._load_library(lib_path)
         self.tts = None
         self.current_lang = None
-
-    @staticmethod
-    def _get_platform_lib_path() -> str:
-        """
-        Determines the appropriate shared library path based on the platform and architecture.
-
-        Returns:
-            str: The path to the shared library for the current platform and architecture.
-
-        Raises:
-            RuntimeError: If the platform is unsupported.
-        """
-        system = platform.system().lower()
-        arch = platform.architecture()[0]
-
-        # Detecting ARM and AArch64 architectures
-        if "arm" in platform.processor().lower():
-            if arch == "64bit":
-                return f"{dirname(__file__)}/libhtts_aarch64.so"
-            else:
-                return f"{dirname(__file__)}/libhtts_arm.so"
-
-        # For Linux (x86_64 and x86)
-        if system == "linux":
-            if arch == "64bit":
-                return f"{dirname(__file__)}/libhtts_x86_64.so"
-            else:
-                return f"{dirname(__file__)}/libhtts_x86.so"
-
-        # For macOS (64-bit)
-        elif system == "darwin":
-            if arch == "64bit":
-                return f"{dirname(__file__)}/libhtts_x86_64.dylib"
-            else:
-                return f"{dirname(__file__)}/libhtts_x86.dylib"
-
-        # Windows
-        elif system == "windows":
-            return f"{dirname(__file__)}/libhtts_x86.dll"
-
-        else:
-            raise RuntimeError(f"Unsupported platform: {system}")
 
     def _load_library(self, lib_path: str):
         """
