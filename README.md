@@ -6,15 +6,15 @@ engine is based on hts_engine and it uses a high quality vocoder called
 AhoCoder. Developed by Aholab Signal Processing Laboratory, at the Bilbao
 School of Engineering (University of the Basque Country).
 
-## TODO
-
-- [ ] bundle .so files for all platforms
-- [ ] publish to pypi
-
-## Install
+## Compile
 
 ```bash
-pip install git+https://github.com/TigreGotico/pyAhoTTS
+git clone https://github.com/TigreGotico/pyAhoTTS
+cd pyAhoTTS
+mkdir build
+cd build
+cmake .. 
+make
 ```
 
 ## Usage
@@ -38,20 +38,6 @@ audio_bytes = tts.get_tts("Hola Mundo", lang="es", wav_path="output_es.wav")
 if audio_bytes:
     print(f"Generated {len(audio_bytes)} bytes of audio.")
 ```
-
-### Compile
-
-If not running on x86_64 you will need to compile from source
-
-```bash
-git clone https://github.com/TigreGotico/pyAhoTTS
-cd AhoTTS
-mkdir build
-cd build
-cmake .. 
-make
-```
-
 
 ## LICENSE
 
