@@ -3,6 +3,30 @@ import os
 
 BASE = os.path.dirname(__file__)
 
+def get_version():
+    """ Find the version of ovos-core"""
+    version = None
+    version_file = os.path.join(BASE, 'pyahotts', 'version.py')
+    major, minor, build, alpha = (None, None, None, None)
+    with open(version_file) as f:
+        for line in f:
+            if 'VERSION_MAJOR' in line:
+                major = line.split('=')[1].strip()
+            elif 'VERSION_MINOR' in line:
+                minor = line.split('=')[1].strip()
+            elif 'VERSION_BUILD' in line:
+                build = line.split('=')[1].strip()
+            elif 'VERSION_ALPHA' in line:
+                alpha = line.split('=')[1].strip()
+
+            if ((major and minor and build and alpha) or
+                    '# END_VERSION_BLOCK' in line):
+                break
+    version = f"{major}.{minor}.{build}"
+    if int(alpha):
+        version += f"a{alpha}"
+    return version
+
 def get_package_data():
     """Function to collect all necessary package data files."""
     data_files = []
@@ -17,7 +41,7 @@ def get_package_data():
 
 setup(
     name='pyahotts',
-    version='0.0.1',
+    version=get_version(),
     description='AhoTTS - python Text-to-Speech package',
     author='JarbasAI',
     author_email='jarbasai@mailfence.com',
