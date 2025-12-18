@@ -22,10 +22,10 @@ make
 ```python
 from pyahotts import AhoTTS
 
-# for x86 you don't need to pass lib_path
-# libhtts_x86.so is bundled with the package
+# libhtts_x86_64.so and libhtts_aarch64.so is bundled with the package
+# for other archs like x86 (32bit) you need to pass lib_path
 tts = AhoTTS(
-    lib_path="/home/miro/PycharmProjects/AhoTTS/libhtts_aarch64.so"
+    lib_path="/home/miro/PycharmProjects/AhoTTS/libhtts_x86.so"
 )
 
 audio_bytes = tts.get_tts("Kaixo Mundua!", lang="eu", wav_path="output_eu.wav")
