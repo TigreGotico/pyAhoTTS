@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.0a1](https://github.com/TigreGotico/pyAhoTTS/tree/0.1.0a1) (2026-06-17)
+
+[Full Changelog](https://github.com/TigreGotico/pyAhoTTS/compare/0.0.2a1...0.1.0a1)
+
+**Merged pull requests:**
+
+- feat: phonetic transcription API \(get\_phonemes\) [\#7](https://github.com/TigreGotico/pyAhoTTS/pull/7) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.2a1](https://github.com/TigreGotico/pyAhoTTS/tree/0.0.2a1) (2025-12-18)
 
 [Full Changelog](https://github.com/TigreGotico/pyAhoTTS/compare/0.0.1...0.0.2a1)
