@@ -7,6 +7,19 @@ from typing import Optional
 import numpy as np
 
 
+# AhoTTS SAMPA -> IPA. Matches the mapping shipped with the Aholab phonemizer
+# (https://huggingface.co/spaces/arrandi/phonemizer-eus-esp). Used by
+# AhoTTS.get_phonemes(ipa=True).
+SAMPA_TO_IPA = {
+    "p": "p", "b": "b", "t": "t", "c": "c", "d": "d", "k": "k", "g": "ɡ",
+    "tS": "tʃ", "ts": "ts", "ts`": "tʂ", "gj": "ɟ", "jj": "ʝ", "f": "f",
+    "B": "β", "T": "θ", "D": "ð", "s": "s", "s`": "ʂ", "S": "ʃ", "x": "x",
+    "G": "ɣ", "m": "m", "n": "n", "J": "ɲ", "l": "l", "L": "ʎ", "r": "ɾ",
+    "rr": "r", "j": "j", "w": "w", "i": "i", "e": "e", "a": "a", "o": "o",
+    "u": "u", "y": "y", "Z": "ʒ", "h": "h", "ph": "pʰ", "kh": "kʰ", "th": "tʰ",
+}
+
+
 class AhoTTS:
     """
     A class to interact with AhoTTS, a text-to-speech (TTS) system that uses a shared library for synthesis.
@@ -62,6 +75,16 @@ class AhoTTS:
 
         self.lib.free_samples.argtypes = [ctypes.POINTER(ctypes.c_short)]
         self.lib.destroy_tts.argtypes = [ctypes.c_void_p]
+
+        # Phonetic transcription: char* transcribe_text(tts, text, data_path, lang)
+        self.lib.transcribe_text.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_char_p,
+            ctypes.c_char_p,
+            ctypes.c_char_p,
+        ]
+        self.lib.transcribe_text.restype = ctypes.c_void_p
+        self.lib.free_string.argtypes = [ctypes.c_void_p]
 
     def _recreate_tts(self, lang: str):
         """
@@ -123,6 +146,56 @@ class AhoTTS:
 
         self.lib.free_samples(samples_ptr)
         return samples_bytes
+
+    def get_phonemes(self, text: str, lang: str = "eu", ipa: bool = False):
+        """
+        Phonetically transcribe text to SAMPA (or IPA) without synthesizing audio.
+
+        Runs the full AhoTTS linguistic pipeline (number/date/abbreviation
+        normalization, grapheme-to-phoneme, syllabification, lexical stress) and
+        returns the phoneme transcription. This is a pure-Python replacement for
+        shelling out to the standalone AhoTTS `modulo1y2` linguistic binary.
+
+        Args:
+            text (str): Input text.
+            lang (str): Language code ('eu' for Basque, 'es' for Spanish).
+            ipa (bool): If True, map SAMPA phones to IPA via SAMPA_TO_IPA.
+
+        Returns:
+            list[list[str]]: One list of phones per word, in order. Lexical
+            stress is carried as a leading "'" on the stressed phone. Returns
+            an empty list if transcription fails.
+        """
+        text_bytes = text.encode("ISO-8859-15", "replace")
+        lang_bytes = lang.encode("utf-8")
+
+        if self.tts is None or self.current_lang != lang:
+            self._recreate_tts(lang)
+
+        ptr = self.lib.transcribe_text(self.tts, text_bytes, self.data_path, lang_bytes)
+        if not ptr:
+            return []
+        raw = ctypes.cast(ptr, ctypes.c_char_p).value.decode("ISO-8859-15")
+        self.lib.free_string(ptr)
+
+        words = []
+        for line in raw.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            phones = line.split(" ")
+            if ipa:
+                phones = [self._sampa_to_ipa(p) for p in phones]
+            words.append(phones)
+        return words
+
+    @staticmethod
+    def _sampa_to_ipa(phone: str) -> str:
+        """Map a single (optionally stress-marked) SAMPA phone to IPA."""
+        stress = ""
+        if phone.startswith("'"):
+            stress, phone = "'", phone[1:]
+        return stress + SAMPA_TO_IPA.get(phone, phone)
 
     def __del__(self):
         """

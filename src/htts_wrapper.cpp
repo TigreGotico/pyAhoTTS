@@ -1,6 +1,7 @@
 #include "htts.hpp"
 #include <cstring>
 #include <cstdlib>
+#include <string>
 
 extern "C" {
 
@@ -36,6 +37,34 @@ int synthesize_text(HTTS* tts, const char* text, const char* data_path, const ch
         return len > 0;
     }
     return 0;
+}
+
+// Phonetic (SAMPA) transcription of `text`. Runs the full linguistic pipeline
+// (normalization, G2P, syllabification, stress) but no acoustic synthesis, and
+// returns a newly-allocated UTF-8/ISO string: one word per line, phones
+// space-separated, lexical stress as a leading "'". Caller frees with free_string().
+// Returns NULL on failure / empty result.
+char* transcribe_text(HTTS* tts, const char* text, const char* data_path, const char* lang) {
+    if (!tts) return nullptr;
+    if (!tts->input_multilingual(text, lang, data_path, false)) return nullptr;
+
+    std::string acc;
+    char* seg;
+    while ((seg = tts->transcribe_next(lang)) != nullptr) {
+        if (seg[0]) {                       // skip flush/empty sentinels
+            if (!acc.empty()) acc += "\n";
+            acc += seg;
+        }
+        free(seg);
+    }
+    if (acc.empty()) return nullptr;
+    return strdup(acc.c_str());
+}
+
+void free_string(char* s) {
+    if (s) {
+        free(s);
+    }
 }
 
 void free_samples(short* samples) {
