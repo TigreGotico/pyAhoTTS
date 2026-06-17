@@ -39,6 +39,26 @@ if audio_bytes:
     print(f"Generated {len(audio_bytes)} bytes of audio.")
 ```
 
+## Phonemes (phonetic transcription)
+
+`get_tts` synthesizes audio; `get_phonemes` runs only the linguistic front end
+(number/date/abbreviation normalization, grapheme-to-phoneme, syllabification and
+lexical stress) and returns the SAMPA (or IPA) transcription — a pure-Python
+replacement for shelling out to the standalone AhoTTS `modulo1y2` binary.
+
+```python
+from pyahotts import AhoTTS
+
+tts = AhoTTS()
+
+# one list of phones per word; lexical stress is a leading "'" on the nucleus
+tts.get_phonemes("Bai eta ez.", lang="eu")
+# [['b', "'a", 'j'], ['e', 't', 'a'], ["'e", 's`']]
+
+tts.get_phonemes("Bai eta ez.", lang="eu", ipa=True)
+# [['b', "'a", 'j'], ['e', 't', 'a'], ["'e", 'ʂ']]
+```
+
 ## LICENSE
 
 Read `COPYRIGHT_and_LICENSE_code.txt` and `COPYRIGHT_and_LICENSE_voices.txt`
