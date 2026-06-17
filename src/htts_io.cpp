@@ -252,6 +252,10 @@ int HTTS::output_multilingual(const char * lang, short **samples){
 		return data->synthesize_do_next_sentence(lang, samples);
 }
 
+char *HTTS::transcribe_next(const char * /*lang*/){
+		return data->transcribe_do_next_sentence();
+}
+
 
 /*<DOC>*/
 /**********************************************************/

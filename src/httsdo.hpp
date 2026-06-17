@@ -191,6 +191,7 @@ public:
 	//inaki
 	BOOL synthesize_do_input( const CHAR *str, const CHAR *lang , BOOL InputIsFile, const CHAR *data_path);
 	int synthesize_do_next_sentence(  const CHAR *lang , short **samples);//procesa frase
+	char *transcribe_do_next_sentence( VOID );//transcripcion fonetica (SAMPA) de la siguiente frase
 #ifdef HTTS_LANG_FEST
 	int str2num(const char * cadena);
 	char *num2str(int num);

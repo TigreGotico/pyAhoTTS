@@ -22,10 +22,10 @@ make
 ```python
 from pyahotts import AhoTTS
 
-# for x86 you don't need to pass lib_path
-# libhtts_x86.so is bundled with the package
+# libhtts_x86_64.so and libhtts_aarch64.so is bundled with the package
+# for other archs like x86 (32bit) you need to pass lib_path
 tts = AhoTTS(
-    lib_path="/home/miro/PycharmProjects/AhoTTS/libhtts_aarch64.so"
+    lib_path="/home/miro/PycharmProjects/AhoTTS/libhtts_x86.so"
 )
 
 audio_bytes = tts.get_tts("Kaixo Mundua!", lang="eu", wav_path="output_eu.wav")
@@ -37,6 +37,28 @@ audio_bytes = tts.get_tts("Hola Mundo", lang="es", wav_path="output_es.wav")
 
 if audio_bytes:
     print(f"Generated {len(audio_bytes)} bytes of audio.")
+```
+
+## Phonemes (phonetic transcription)
+
+`get_tts` synthesizes audio; `get_phonemes` runs only the linguistic front end
+(number/date/abbreviation normalization, grapheme-to-phoneme, syllabification and
+lexical stress) and returns the SAMPA (or IPA) transcription — the AhoTTS
+linguistic analysis exposed directly, without the acoustic stage.
+
+Full documentation: [`docs/`](docs/README.md).
+
+```python
+from pyahotts import AhoTTS
+
+tts = AhoTTS()
+
+# one list of phones per word; lexical stress is a leading "'" on the nucleus
+tts.get_phonemes("Bai eta ez.", lang="eu")
+# [['b', "'a", 'j'], ['e', 't', 'a'], ["'e", 's`']]
+
+tts.get_phonemes("Bai eta ez.", lang="eu", ipa=True)
+# [['b', "'a", 'j'], ['e', 't', 'a'], ["'e", 'ʂ']]
 ```
 
 ## LICENSE
