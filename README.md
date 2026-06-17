@@ -43,8 +43,10 @@ if audio_bytes:
 
 `get_tts` synthesizes audio; `get_phonemes` runs only the linguistic front end
 (number/date/abbreviation normalization, grapheme-to-phoneme, syllabification and
-lexical stress) and returns the SAMPA (or IPA) transcription — a pure-Python
-replacement for shelling out to the standalone AhoTTS `modulo1y2` binary.
+lexical stress) and returns the SAMPA (or IPA) transcription — the AhoTTS
+linguistic analysis exposed directly, without the acoustic stage.
+
+Full documentation: [`docs/`](docs/README.md).
 
 ```python
 from pyahotts import AhoTTS
