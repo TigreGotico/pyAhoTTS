@@ -30,6 +30,10 @@ class AhoTTS:
         current_lang (Optional[str]): The current language used by the TTS instance.
     """
 
+    # Output sample rate of the bundled voices (Hz). The shipped HTS voices are
+    # 16 kHz; the synthesis path emits 16-bit mono PCM at this rate.
+    SAMPLE_RATE = 16000
+
     def __init__(self, lib_path: Optional[str] = None,
                  data_path: str = f"{dirname(__file__)}/data_tts"):
         """
@@ -130,31 +134,41 @@ class AhoTTS:
             ctypes.byref(samples_ptr), ctypes.byref(length)
         )
 
-        if not success or length.value <= 0:
+        # Free the native buffer whenever it was allocated, regardless of how we
+        # leave this method -- including the empty/failed path and if numpy/wave
+        # raise. `samples_ptr` is non-null once the C side has written it.
+        if not samples_ptr:
             return b""
+        try:
+            if not success or length.value <= 0:
+                return b""
 
-        # Convert to NumPy array
-        samples_np = np.ctypeslib.as_array(samples_ptr, shape=(length.value,))
-        samples_bytes = samples_np.astype(np.int16).tobytes()
+            # Copy out of the native buffer (do NOT keep a view past free).
+            samples_np = np.ctypeslib.as_array(samples_ptr, shape=(length.value,))
+            samples_bytes = samples_np.astype(np.int16).tobytes()
 
-        if wav_path:
-            with wave.open(wav_path, "wb") as wf:
-                wf.setnchannels(1)  # Mono
-                wf.setsampwidth(2)  # 2 bytes per sample (16-bit)
-                wf.setframerate(16000)  # Assuming 16kHz
-                wf.writeframes(samples_bytes)
+            if wav_path:
+                with wave.open(wav_path, "wb") as wf:
+                    wf.setnchannels(1)            # Mono
+                    wf.setsampwidth(2)            # 2 bytes per sample (16-bit)
+                    wf.setframerate(self.SAMPLE_RATE)
+                    wf.writeframes(samples_bytes)
 
-        self.lib.free_samples(samples_ptr)
-        return samples_bytes
+            return samples_bytes
+        finally:
+            self.lib.free_samples(samples_ptr)
 
     def get_phonemes(self, text: str, lang: str = "eu", ipa: bool = False):
         """
         Phonetically transcribe text to SAMPA (or IPA) without synthesizing audio.
 
         Runs the full AhoTTS linguistic pipeline (number/date/abbreviation
-        normalization, grapheme-to-phoneme, syllabification, lexical stress) and
-        returns the phoneme transcription. This is a pure-Python replacement for
-        shelling out to the standalone AhoTTS `modulo1y2` linguistic binary.
+        normalization, grapheme-to-phoneme, syllabification, lexical stress) in
+        the bundled engine library and returns the phoneme transcription. It runs
+        in-process via the shared library (no subprocess), so it does not need the
+        standalone AhoTTS `modulo1y2` linguistic binary. For a dependency-free,
+        pure-Python G2P matching a specific AhoTTS release, see the companion port
+        project (ahotts-g2p).
 
         Args:
             text (str): Input text.
