@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.1a1](https://github.com/TigreGotico/pyAhoTTS/tree/0.1.1a1) (2026-06-18)
+
+[Full Changelog](https://github.com/TigreGotico/pyAhoTTS/compare/0.1.0a2...0.1.1a1)
+
+**Closed issues:**
+
+- es phonemizer: ¿/¡ \(inverted marks\) double the last phoneme of the sentence [\#11](https://github.com/TigreGotico/pyAhoTTS/issues/11)
+
+**Merged pull requests:**
+
+- fix: get\_phonemes docstring + harden get\_tts buffer handling [\#12](https://github.com/TigreGotico/pyAhoTTS/pull/12) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.0a2](https://github.com/TigreGotico/pyAhoTTS/tree/0.1.0a2) (2026-06-17)
 
 [Full Changelog](https://github.com/TigreGotico/pyAhoTTS/compare/0.1.0a1...0.1.0a2)
