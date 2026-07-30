@@ -47,6 +47,8 @@ See [Building libhtts](building.md) for details on the build and the exported C 
 
 ## Supported platforms
 
-Linux `x86_64` and `aarch64` are shipped prebuilt. macOS/Windows are not bundled;
-build `libhtts` for your platform and pass `lib_path`.
-</content>
+Linux `x86_64` and `aarch64` are shipped prebuilt. macOS and Windows are not
+bundled. Build `libhtts` for your platform and pass `lib_path`.
+
+---
+[Home](README.md) · [Usage →](usage.md)

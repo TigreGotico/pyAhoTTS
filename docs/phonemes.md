@@ -13,7 +13,7 @@ tts.get_phonemes("Kaixo mundua!", lang="eu", ipa=True)
 
 ## Output format
 
-- A **list of words**; each word is a **list of phone tokens** in order.
+- A **list of words**. Each word is a **list of phone tokens** in order.
 - **Lexical stress** is a leading `'` on the stressed nucleus (e.g. `"'o"`).
 - Phones are **SAMPA** by default, or **IPA** when `ipa=True`.
 
@@ -32,10 +32,10 @@ text
 ```
 
 The native side walks the utterance one word at a time, emitting the canonical
-SAMPA for each phone (via the engine's `phone_tosampa` table — **not** the
+SAMPA for each phone via the engine's `phone_tosampa` table. This is not the
 HTS-label remaps used for the acoustic model, so e.g. `z`→`s\`` and `tz`→`ts\``
-are preserved), with `'` prefixed on stressed nuclei. Pause/silence phones are
-dropped; word boundaries separate the lists.
+are preserved, with `'` prefixed on stressed nuclei. Pause and silence phones
+are dropped. Word boundaries separate the lists.
 
 ## SAMPA → IPA
 
@@ -55,10 +55,12 @@ conversion.
 
 ## Notes & limitations
 
-- The transcription reflects the **bundled engine version** (V1 — see
+- The transcription reflects the **bundled engine version** (V1, see
   [Versions](versions.md)). Other AhoTTS releases phonemize slightly differently
-  (diphthong glides, stress, dictionary exceptions); pin behavior with the
+  (diphthong glides, stress, dictionary exceptions). Pin behavior with the
   [golden tests](testing.md).
-- AhoTTS is the *engine*; if you need a pure-Python, dependency-free G2P that
+- AhoTTS is the engine. If you need a pure-Python, dependency-free G2P that
   matches a specific AhoTTS version, see the companion port project.
-</content>
+
+---
+[← Usage](usage.md) · [Home](README.md) · [Architecture →](architecture.md)

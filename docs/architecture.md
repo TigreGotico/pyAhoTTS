@@ -37,10 +37,10 @@ recreates the engine instance when the language changes.
 `transcribe_text` reuses the engine's linguistic stage and stops before acoustic
 synthesis. It runs `input_multilingual` then walks the resolved utterance with
 `HTS_U2W::pho2sampa`, emitting canonical SAMPA per phone (`phone_tosampa`), one
-word per line, stress as a leading `'`. Because no voice models are loaded on this
-path, the destructor guards `HTS_Engine_clear` with an "engine initialized" flag —
-otherwise transcribing (or merely creating an engine) and then destroying it would
-free uninitialized pointers.
+word per line, stress as a leading `'`. No voice models load on this path, so the
+destructor guards `HTS_Engine_clear` with an "engine initialized" flag. Without
+this guard, transcribing (or merely creating an engine) and then destroying it
+would free uninitialized pointers.
 
 ## Data layout (`data_tts/`)
 
@@ -50,6 +50,8 @@ data_tts/
   voices/  aholab_eu_female/, aholab_es_female/   # HTS voice models
 ```
 
-`data_path` defaults to the packaged `data_tts`; override it to point at custom
-dictionaries/voices.
-</content>
+`data_path` defaults to the packaged `data_tts`. Override it to point at custom
+dictionaries and voices.
+
+---
+[← Phonemes](phonemes.md) · [Home](README.md) · [Building →](building.md)
