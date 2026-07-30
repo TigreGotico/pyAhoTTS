@@ -678,7 +678,36 @@ int HTTSDo::synthesize_do_next_sentence( const CHAR *lang, short **samples){
 	}
 	return num_muestras;
 	//*out=strdup(Silabificado);
-	
+
+}
+/**********************************************************/
+/**********************************************************/
+// Phonetic transcription of the next available sentence.
+// Mirrors synthesize_do_next_sentence() up to the linguistic stage, but instead
+// of generating HTS labels + acoustic samples it walks the resolved utterance
+// and emits the SAMPA phoneme string. One word per line (phones space-separated);
+// lexical stress is prefixed to the phone with the stress mark stored in the cell
+// (USTRESS_TEXT == '\''), matching the SAMPA the standalone AhoTTS linguistic tool
+// writes. Pause/silence phones are dropped (word boundaries already split lines).
+// Caller owns the returned buffer (free()); returns NULL when no sentence is left.
+char *HTTSDo::transcribe_do_next_sentence( VOID ){
+	BOOL flush=FALSE;
+	Utt* u = t2u->output(&flush);
+	if (!u){
+		// flush sentinel: ack it so t2u state stays consistent, and signal the
+		// caller to keep going (empty string). A NULL with no flush means done.
+		if (flush){
+			t2u->outack();
+			return strdup("");
+		}
+		return NULL;
+	}
+	ackpending = TRUE;
+	lingp->utt_lingp(u);            // resolve phones / stress / word structure
+	String out="";
+	((HTS_U2W*)u2w)->pho2sampa((UttPh*)u, out);
+	t2u->outack();
+	return strdup((const char*)out);
 }
 /**********************************************************/
 /**********************************************************/
