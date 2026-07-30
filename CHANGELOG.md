@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1a2](https://github.com/TigreGotico/pyAhoTTS/tree/0.1.1a2) (2026-07-30)
+
+[Full Changelog](https://github.com/TigreGotico/pyAhoTTS/compare/0.1.1a1...0.1.1a2)
+
+**Merged pull requests:**
+
+- docs: rewrite README in Simplified Technical English [\#16](https://github.com/TigreGotico/pyAhoTTS/pull/16) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.1a1](https://github.com/TigreGotico/pyAhoTTS/tree/0.1.1a1) (2026-06-18)
 
 [Full Changelog](https://github.com/TigreGotico/pyAhoTTS/compare/0.1.0a2...0.1.1a1)
