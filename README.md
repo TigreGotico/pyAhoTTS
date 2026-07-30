@@ -1,10 +1,10 @@
 # AhoTTS Python
 
-[AhoTTS](https://github.com/aholab/AhoTTS) is a Text-to-Speech conversor for Basque and Spanish. 
-It includes linguistic processing and built voices for the languages aforementioned. Its acoustic
-engine is based on hts_engine and it uses a high quality vocoder called
-AhoCoder. Developed by Aholab Signal Processing Laboratory, at the Bilbao
-School of Engineering (University of the Basque Country).
+[AhoTTS](https://github.com/aholab/AhoTTS) is a Text-to-Speech system for Basque and Spanish.
+It includes linguistic processing and built voices for both languages. Its acoustic engine is
+based on hts_engine and uses a vocoder called AhoCoder. The Aholab Signal Processing
+Laboratory at the Bilbao School of Engineering (University of the Basque Country) develops
+AhoTTS.
 
 ## Compile
 
@@ -41,9 +41,9 @@ if audio_bytes:
 
 ## Phonemes (phonetic transcription)
 
-`get_tts` synthesizes audio; `get_phonemes` runs only the linguistic front end
+`get_tts` synthesizes audio. `get_phonemes` runs only the linguistic front end
 (number/date/abbreviation normalization, grapheme-to-phoneme, syllabification and
-lexical stress) and returns the SAMPA (or IPA) transcription — the AhoTTS
+lexical stress) and returns the SAMPA (or IPA) transcription. This is the AhoTTS
 linguistic analysis exposed directly, without the acoustic stage.
 
 Full documentation: [`docs/`](docs/README.md).
@@ -65,20 +65,22 @@ tts.get_phonemes("Bai eta ez.", lang="eu", ipa=True)
 
 Read `COPYRIGHT_and_LICENSE_code.txt` and `COPYRIGHT_and_LICENSE_voices.txt`
 
-    Basque (voice models & linguistic data):
-     	Copyright: Aholab Signal Processing Laboratory, University of the Basque Country (UPV/EHU)
-    	License: The files in this package are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
-    	         http://creativecommons.org/licenses/by-sa/3.0/
-    
-    Spanish: (voice models & linguistic data):
-     	Copyright: Aholab Signal Processing Laboratory, University of the Basque Country (UPV/EHU)
-    	License: The files in this package are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
-    	         http://creativecommons.org/licenses/by-sa/3.0/
+```
+Basque (voice models & linguistic data):
+	Copyright: Aholab Signal Processing Laboratory, University of the Basque Country (UPV/EHU)
+	License: The files in this package are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
+	         http://creativecommons.org/licenses/by-sa/3.0/
+
+Spanish: (voice models & linguistic data):
+	Copyright: Aholab Signal Processing Laboratory, University of the Basque Country (UPV/EHU)
+	License: The files in this package are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
+	         http://creativecommons.org/licenses/by-sa/3.0/
+```
 
 ## Credits
 
 <img src="img.png" width="128"/>
 
-> Python bindings for AhoTTS were funded by the Ministerio para la Transformación Digital y de la Función Pública and Plan de Recuperación, Transformación y Resiliencia - Funded by EU – NextGenerationEU within the framework of the project ILENIA with reference 2022/TL22/00215337
+> The Ministerio para la Transformación Digital y de la Función Pública and the Plan de Recuperación, Transformación y Resiliencia funded the Python bindings for AhoTTS. The EU (NextGenerationEU) funded this work within the ILENIA project, reference 2022/TL22/00215337.
 
-> Based on the [fork from @ekaitz-zarraga](https://github.com/ekaitz-zarraga/AhoTTS)
+> Based on the [fork from @ekaitz-zarraga](https://github.com/ekaitz-zarraga/AhoTTS).

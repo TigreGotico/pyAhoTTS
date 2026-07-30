@@ -8,8 +8,8 @@ syllabification → lexical stress) with an HTS-based acoustic engine and the
 AhoCoder vocoder.
 
 `pyahotts` wraps the compiled engine (`libhtts`) via `ctypes` and ships the native
-library plus all voice/dictionary data inside the wheel, so you can synthesize
-speech — and now obtain phonetic transcriptions — without compiling anything.
+library plus all voice/dictionary data inside the wheel. This lets you synthesize
+speech and get phonetic transcriptions without compiling anything.
 
 ```python
 from pyahotts import AhoTTS
@@ -22,14 +22,14 @@ tts.get_phonemes("Kaixo mundua!", lang="eu", ipa=True)        # text -> phonemes
 
 ## Contents
 
-- [Installation](installation.md) — pip install, and building `libhtts` from source.
-- [Usage](usage.md) — the `AhoTTS` API: synthesis and phonemization.
-- [Phonemes](phonemes.md) — phonetic transcription, SAMPA/IPA, stress, the SAMPA→IPA table.
-- [Architecture](architecture.md) — how the binding and the C engine fit together.
-- [Building libhtts](building.md) — the CMake build, the C API, per-architecture `.so` notes.
-- [Versions & source of truth](versions.md) — the AhoTTS V1/V2/V3 lineage and what pyAhoTTS bundles.
-- [Testing](testing.md) — unit + end-to-end golden tests, regenerating fixtures, CI.
-- [Licensing](licensing.md) — the split license and credits.
+- [Installation](installation.md): pip install, and building `libhtts` from source.
+- [Usage](usage.md): the `AhoTTS` API for synthesis and phonemization.
+- [Phonemes](phonemes.md): phonetic transcription, SAMPA/IPA, stress, the SAMPA→IPA table.
+- [Architecture](architecture.md): how the binding and the C engine fit together.
+- [Building libhtts](building.md): the CMake build, the C API, per-architecture `.so` notes.
+- [Versions & source of truth](versions.md): the AhoTTS V1/V2/V3 lineage and what pyAhoTTS bundles.
+- [Testing](testing.md): unit and end-to-end golden tests, regenerating fixtures, CI.
+- [Licensing](licensing.md): the split license and credits.
 
 ## At a glance
 
@@ -41,4 +41,3 @@ tts.get_phonemes("Kaixo mundua!", lang="eu", ipa=True)        # text -> phonemes
 | Native lib | `libhtts` (bundled `.so` for `x86_64` and `aarch64`) |
 | Runtime deps | `numpy` only |
 | Internal text encoding | ISO-8859-15 |
-</content>

@@ -9,15 +9,15 @@ pytest test/ -q
 
 ## What is tested
 
-- **Unit** (`test/test_phonemes.py`) — `get_phonemes` output shape, SAMPA/IPA
+- **Unit** (`test/test_phonemes.py`): `get_phonemes` output shape, SAMPA/IPA
   mapping, stress marks, empty input, and that transcribing then synthesizing does
   not corrupt engine state.
-- **End-to-end** (`test/test_e2e.py`) — golden tests that pin the engine's
-  behavior:
-  - `test_phonemes_match_v1_golden` — `get_phonemes` must reproduce the committed
+- **End-to-end** (`test/test_e2e.py`): golden tests that pin the engine's
+  behavior.
+  - `test_phonemes_match_v1_golden`: `get_phonemes` must reproduce the committed
     **V1** transcriptions verbatim.
-  - `test_synthesis_produces_audio` — `get_tts` yields a non-trivial waveform.
-  - `test_spanish_synthesis_smoke` — Spanish path produces audio.
+  - `test_synthesis_produces_audio`: `get_tts` yields a non-trivial waveform.
+  - `test_spanish_synthesis_smoke`: Spanish path produces audio.
 
 ## Golden fixtures
 
@@ -48,4 +48,6 @@ build-tests (matrix Python versions), coverage, lint, license-check, pip-audit,
 repo-health, and release-preview. The golden e2e tests run as part of build-tests,
 so any drift of the bundled binding versus upstream V1 fails CI without needing to
 rebuild the upstream sources.
-</content>
+
+---
+[← Building](building.md) · [Home](README.md) · [Licensing →](licensing.md)
