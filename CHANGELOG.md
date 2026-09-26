@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1a3](https://github.com/TigreGotico/pyAhoTTS/tree/0.1.1a3) (2026-09-26)
+
+[Full Changelog](https://github.com/TigreGotico/pyAhoTTS/compare/0.1.1a2...0.1.1a3)
+
+**Merged pull requests:**
+
+- Update actions/checkout action to v7 [\#14](https://github.com/TigreGotico/pyAhoTTS/pull/14) ([renovate[bot]](https://github.com/apps/renovate))
+
 ## [0.1.1a2](https://github.com/TigreGotico/pyAhoTTS/tree/0.1.1a2) (2026-07-30)
 
 [Full Changelog](https://github.com/TigreGotico/pyAhoTTS/compare/0.1.1a1...0.1.1a2)
