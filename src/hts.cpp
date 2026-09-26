@@ -178,7 +178,12 @@ HTS_U2W::~HTS_U2W( VOID )
    //liberar memoria
 	free(Language);
 	 // free memory
-	HTS_Engine_clear(&engine);
+	// only clear the HTS engine if it was actually initialized (xinput_labels);
+	// otherwise engine->global.* hold uninitialized pointers and HTS_Engine_clear
+	// would free garbage. This path is hit when an utterance is transcribed
+	// (pho2sampa) but never acoustically synthesized.
+	if (HTS_ENGINE_INITIALIZED)
+		HTS_Engine_clear(&engine);
 	//free(rate_interp);
 	if(fn_ws_mcp)
 		free(*fn_ws_mcp);
@@ -1677,6 +1682,34 @@ char HTS_U2W::sentence_type(UttPh *u, Lix p){
 	}
 	type = get_sentence(u,p);
 	return type;
+}
+///////////////////////
+// Phonetic (SAMPA) transcription of an utterance: one word per line, phones
+// space-separated, lexical stress emitted as a leading "'" on the stressed
+// nucleus (USTRESS_TEXT). Pause/silence phones ('_','#') are skipped; word
+// boundaries already start a new line. Uses the same phone2sampa mapping as the
+// HTS label generation, so the SAMPA matches AhoTTS's linguistic output.
+void HTS_U2W::pho2sampa(UttPh *u, String &out){
+	out="";
+	BOOL word_open=FALSE;
+	for (Lix p=u->phoneFirst(); p!=0; p=u->phoneNext(p)){
+		Phone ph = u->cell(p).getPhone();
+		if (ph=='_' || ph=='#'){
+			word_open=FALSE;
+			continue;
+		}
+		if (u->phoneIsFirstOfWord(p)){
+			if (out.length()>0) out += "\n";
+			word_open=FALSE;
+		}
+		if (word_open) out += " ";
+		if (u->cell(p).getStress()!=USTRESS_NONE) out += "'";
+		// canonical SAMPA (phone_tosampa), not phone2sampa's HTS-label remaps
+		// (which fold s`->"z", ts`->"tz" for the acoustic model labels).
+		const char *sampa = phone_tosampa(ph);
+		out += sampa ? sampa : "";
+		word_open=TRUE;
+	}
 }
 ///////////////////////
 void HTS_U2W::pho2hts(UttPh *u, String &labels_string, BOOL setdur){

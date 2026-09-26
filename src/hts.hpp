@@ -213,6 +213,7 @@ public:
 	//FUNCIONES
   short * xinput_labels (String labels, int * num_samples);
   void pho2hts(UttPh *u, String &labels, BOOL setdur); //devuelve la salida en labels
+  void pho2sampa(UttPh *u, String &out); //transcripcion SAMPA (una palabra por linea)
    virtual BOOL set (const CHAR * param, const CHAR* val);
   const CHAR* get (const CHAR * param);
   virtual VOID shiftedWav( INT n );
